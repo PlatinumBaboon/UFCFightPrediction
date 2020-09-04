@@ -1,0 +1,40 @@
+import requests
+from bs4 import BeautifulSoup
+
+
+def page_url(url):
+    headers = {"User-Agent": "Mozilla/5.0"}
+    page = requests.get(url, headers=headers)
+    soup: BeautifulSoup = BeautifulSoup(page.content, 'html.parser')
+    return soup
+
+
+class find_fighters_on_cards:
+
+    fighter1 = []
+    fighter1link = []
+    fighter2 = []
+    fighter2link = []
+    card_link = []
+
+    def find_cards(list, url):
+        url1 = page_url(url)
+        cards = url1.find_all(class_='b-link b-link_style_black')
+        for e in cards[0:100]:
+            list.append((str(e).split('"'))[3])
+        return list
+
+    find_cards(card_link, "http://www.ufcstats.com/statistics/events/completed?page=all")
+
+    def find_card_info(list1, list2, list3, list4, list5):
+        for e in list1:
+            url1 = page_url(e)
+            fighters = url1.find_all(class_='b-link b-link_style_black')
+            for t in range(0, len(fighters), 2):
+                list4.append(str(fighters[t]).split('"')[3])
+                list2.append(fighters[t].text)
+            for y in range(1, len(fighters), 2):
+                list5.append(str(fighters[y]).split('"')[3])
+                list3.append(fighters[y].text)
+
+    find_card_info(card_link, fighter1, fighter2, fighter1link, fighter2link)
