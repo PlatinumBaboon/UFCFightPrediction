@@ -6,6 +6,8 @@ This is done by weighting stats depending on how often a winner had an advantage
 
 e.g if fighter1 has a higher score in a stat (fighter1num - fighter2num)/(fighter1num + fighter2num) * Weight
 
-Weight is calculated by (totalnumber of winners who had a higher stat)/ (Total amount of combined Stats)
+Weight is calculated by (total number of winners who had a higher stat)/ (Total number of fights)
 
 tweaks will be made for combined higher stats to try and get better results
+
+# Time complexity for
