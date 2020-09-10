@@ -55,4 +55,6 @@ class find_fighters_on_cards:
     O(1)*16 + O(n) + O(n^2) + O(n^2) 
     
     remove constants
-    = O(n) + O(2n^2) = O(n^2)
+    = O(n) + O(2n^2)
+    highest growth rate
+    = O(n^2)
