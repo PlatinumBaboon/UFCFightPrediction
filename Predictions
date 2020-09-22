@@ -1,10 +1,10 @@
-from Cardfinder import page_url
 from Cardfinder import find_fighters_on_cards
+import cProfile
+pr = cProfile.Profile()
 
 
 class weight_finder:
-
-
+    pr.enable()
     stats = []
     fighter1 = []
     fighter2 = []
@@ -13,406 +13,162 @@ class weight_finder:
     correct = []
     winners = []
 
-    def find_stats(list1, list2, list3, list4):
-
-
-        TD_Acc = []
-        SLpM = []
-        Str_Acc = []
-        SApM = []
-        Str_Def = []
-        TD_Avg = []
-        TD_Def = []
-        Sub_Avg = []
-        Weight = []
-        Reach = []
-        Height = []
-        record = []
-        exp = []
-
+    def stat_organiser(list1, list2, list3, list4):
 
         statperc = {
-            'Record:': record,
-            'Exp:': exp,
-            'Weight': Weight,
-            'Height': Height,
-            'Reach': Reach,
-            'SLpM': SLpM,
-            'Str.Acc.': Str_Acc,
-            'SApM': SApM,
-            'Str.Def': Str_Def,
-            'TDAvg.': TD_Avg,
-            'TDAcc.': TD_Acc,
-            'TDDef.': TD_Def,
-            'Sub.Avg.': Sub_Avg
+            'Record:': [],
+            'Exp:': [],
+            'Weight:': [],
+            'Height:': [],
+            'Reach:': [],
+            'SLpM:': [],
+            'Str.Acc.:': [],
+            'SApM:': [],
+            'Str.Def:': [],
+            'TDAvg.:': [],
+            'TDAcc.:': [],
+            'TDDef.:': [],
+            'Sub.Avg.:': [],
         }
 
-
         for y in range(len(list1)):
-            url1 = page_url(list1[y])
-            Stats = url1.find_all(class_='b-list__box-list-item b-list__box-list-item_type_block')
-            Stats3 = url1.find_all(class_='b-content__title-record')
-            url2 = page_url(list2[y])
-            Stats2 = url2.find_all(class_='b-list__box-list-item b-list__box-list-item_type_block')
-            Stats4 = url2.find_all(class_='b-content__title-record')
-            fighter11 = []
-            fighter22 = []
-            for o in range(len(Stats3)):
-                e1 = Stats3[o].text.split()[1].split('-')
-                w1 = Stats4[o].text.split()[1].split('-')
-                Win_perc = ((int(e1[1])) / ((int(e1[0])) + (int(e1[1])) + (int(e1[2]))))
-                Win_perc2 = ((int(w1[1])) / ((int(w1[0])) + (int(w1[1])) + (int(w1[2]))))
-                exp1 = ((int(e1[0])) + (int(e1[1])) + (int(e1[2])))
-                exp2 = ((int(w1[0])) + (int(w1[1])) + (int(w1[2])))
-                if exp1 > exp2:
-                    fighter11.append('Exp:' + '+' + str((exp1 - exp2)/(exp1 + exp2)))
-                    exp.append(str(exp1))
-                if exp2 > exp1:
-                    fighter22.append('Exp:' + '+' + str((exp2 - exp1)/(exp1 + exp2)))
-                if Win_perc > Win_perc2:
-                    fighter11.append('Record:' + '+' + str((Win_perc - Win_perc2)/(Win_perc + Win_perc2)))
-                    record.append(str(Win_perc))
-                if Win_perc2 > Win_perc:
-                    fighter22.append('Record:' + '+' + str((Win_perc2 - Win_perc)/(Win_perc + Win_perc2)))
-            for k in range(len(Stats)):
-                u = Stats[k]
-                t = Stats2[k]
-                u2 = u.text
-                u3 = u2.replace('\n', '')
-                u4 = u3.replace(' ', '')
-                u5 = u4.split(':')
-                t2 = t.text
-                t3 = t2.replace('\n', '')
-                t4 = t3.replace(' ', '')
-                t5 = t4.split(':')
-                if u5[0] == '':
-                    u5 = ['0', '0']
-                if t5[0] == '':
-                    t5 = ['0', '0']
-                if u5[1] == '--':
-                    u5 = ['0', '0']
-                if t5[1] == '--':
-                    t5 = ['0', '0']
-                if u5[1] == '0':
-                    if u5[0] == '0':
-                        u5 = ['0', '0']
-                    else:
-                        u5[1] = int(t5[1].replace('"', ''))/4
-                if t5[1] == '0':
-                   if t5[0] == '0':
-                        t5 = ['0', '0']
-                   else:
-                        t5[1] = int((u5[1].replace('"', '')))/4
-                if t5[0] == 'Weight':
-                    if float((u5[1].split('l'))[0]) > float((t5[1].split('l'))[0]):
-                        fighter11.append('Weight' + '+' + str((float((u5[1].split('l'))[0]) - float((t5[1].split('l'))[0])) / float((u5[1].split('l'))[0])))
-                        Weight.append(float((u5[1].split('l'))[0]))
-                    if float((t5[1].split('l'))[0]) > float((u5[1].split('l'))[0]):
-                        fighter22.append('Weight' + '+' + str((float((t5[1].split('l'))[0]) - float((u5[1].split('l'))[0])) / float((t5[1].split('l'))[0])))
-                if t5[0] == 'Reach':
-                    if float(u5[1][0:2]) > float(t5[1][0:2]):
-                        fighter11.append('Reach' + '+' + str((float(u5[1][0:2]) - float(t5[1][0:2])) / int(u5[1][0:2])))
-                        Reach.append(float(u5[1][0:2]))
-                    if float(t5[1][0:2]) > float(u5[1][0:2]):
-                        fighter22.append('Reach' + '+' + str((float(t5[1][0:2]) - float(u5[1][0:2])) / float(t5[1][0:2])))
-                if t5[0] == 'Height':
-                    if float(u5[1].split('\'')[0]) > float(t5[1].split('\'')[0]):
-                        fighter11.append('Height' + '+' + str((((float(u5[1].split('\'')[0])*12) + float(u5[1].split('\'')[1].replace('"', '')))
-                            - ((float(t5[1].split('\'')[0])*12) + float(t5[1].split('\'')[1].replace('"', '')))) /
-                            ((float(u5[1].split('\'')[0])*12) + float(u5[1].split('\'')[1].replace('"', '')))))
-                        Height.append(u5[1])
-                    if float(t5[1].split('\'')[0]) > float(u5[1].split('\'')[0]):
-                        fighter22.append('Height' + '+' + str((((float(t5[1].split('\'')[0])*12) + float(t5[1].split('\'')[1].replace('"', '')))
-                            - ((float(u5[1].split('\'')[0])*12) + float(u5[1].split('\'')[1].replace('"', '')))) /
-                            ((float(t5[1].split('\'')[0])*12) + float(t5[1].split('\'')[1].replace('"', '')))))
-                    if float(u5[1].split('\'')[0]) == float(t5[1].split('\'')[0]):
-                        if float(u5[1].split('\'')[1].replace('"', '')) > float(t5[1].split('\'')[1].replace('"', '')):
-                            fighter11.append('Height' + '+' + str((((float(u5[1].split('\'')[0])*12) + float(u5[1].split('\'')[1].replace('"', '')))
-                                - ((float(t5[1].split('\'')[0])*12) + float(t5[1].split('\'')[1].replace('"', '')))) /
-                                ((float(u5[1].split('\'')[0])*12) + float(u5[1].split('\'')[1].replace('"', '')))))
-                            Height.append(u5[1])
-                        if float(t5[1].split('\'')[1].replace('"', '')) > float(u5[1].split('\'')[1].replace('"', '')):
-                            fighter22.append('Height' + '+' + str((((float(t5[1].split('\'')[0])*12) + float(t5[1].split('\'')[1].replace('"', '')))
-                                - ((float(u5[1].split('\'')[0])*12) + float(u5[1].split('\'')[1].replace('"', '')))) /
-                                ((float(t5[1].split('\'')[0])*12) + float(t5[1].split('\'')[1].replace('"', '')))))
-                if t5[0] == 'SLpM':
-                    if u5[1] > t5[1]:
-                        fighter11.append('SLpM' + '+' + str(
-                            (float(u5[1]) - float(t5[1])) / float(u5[1])))
-                        SLpM.append(u5[1])
-                    if t5[1] > u5[1]:
-                        fighter22.append('SLpM' + '+' + str(
-                            (float(t5[1]) - float(u5[1])) / float(t5[1])))
-                if t5[0] == 'Str.Acc.':
-                    if u5[1] > t5[1]:
-                        fighter11.append('Str.Acc.' + '+' + str((float('0.' + (u5[1]).replace('%', '')) - float('0.' + (t5[1]).replace('%', '')))
-                                 / float('0.' + (u5[1]).replace('%', ''))))
-                        Str_Acc.append(u5[1])
-                    if t5[1] > u5[1]:
-                        fighter22.append('Str.Acc.' + '+' + str((float('0.' + (t5[1]).replace('%', '')) - float('0.' + (u5[1]).replace('%', '')))
-                                 / float('0.' + (t5[1]).replace('%', ''))))
-                if t5[0] == 'SApM':
-                    if u5[1] > t5[1]:
-                        fighter11.append('SApM' + '+' + str((float(u5[1]) - float(t5[1])) / float(u5[1])))
-                        SApM.append(u5[1])
-                    if t5[1] > u5[1]:
-                        fighter22.append('SApM' + '+' + str((float(t5[1]) - float(u5[1])) / float(t5[1])))
-                if t5[0] == 'Str.Def':
-                    if u5[1] > t5[1]:
-                        fighter11.append('Str.Def' + '+' + str((float('0.' + u5[1].replace('%', '')) - float('0.' + t5[1].replace('%', '')))
-                            / float('0.' + u5[1].replace('%', ''))))
-                        Str_Def.append(u5[1])
-                    if t5[1] > u5[1]:
-                        fighter22.append('Str.Def' + '+' + str((float('0.' + t5[1].replace('%', '')) - float('0.' + u5[1].replace('%', '')))
-                            / float('0.' + t5[1].replace('%', ''))))
-                if t5[0] == 'TDAvg.':
-                    if u5[1] > t5[1]:
-                        fighter11.append('TDAvg.' + '+' + str((float(u5[1]) - float(t5[1])) / float(u5[1])))
-                        TD_Avg.append(u5[1])
-                    if t5[1] > u5[1]:
-                        fighter22.append('TDAvg.' + '+' + str((float(t5[1]) - float(u5[1])) / float(t5[1])))
-                if t5[0] == 'TDAcc.':
-                    if u5[1] > t5[1]:
-                        fighter11.append('TDAcc.' + '+' + str((float('0.' + u5[1].replace('%', '')) - float('0.' + t5[1].replace('%', '')))
-                            / float('0.' + u5[1].replace('%', ''))))
-                        TD_Acc.append(u5[1])
-                    if t5[1] > u5[1]:
-                        fighter22.append('TDAcc.' + '+' + str((float('0.' + t5[1].replace('%', '')) - float('0.' + u5[1].replace('%', '')))
-                            / float('0.' + t5[1].replace('%', ''))))
-                if t5[0] == 'TDDef.':
-                    if u5[1] > t5[1]:
-                        fighter11.append('TDDef.' + '+' + str((float('0.' + u5[1].replace('%', '')) - float('0.' + t5[1].replace('%', '')))
-                            / float('0.' + u5[1].replace('%', ''))))
-                        TD_Def.append(u5[1])
-                    if t5[1] > u5[1]:
-                        fighter22.append('TDDef.' + '+' + str((float('0.' + t5[1].replace('%', '')) - float('0.' + u5[1].replace('%', '')))
-                            / float('0.' + t5[1].replace('%', ''))))
-                if t5[0] == 'Sub.Avg.':
-                    if u5[1] > t5[1]:
-                        fighter11.append('Sub.Avg.' + '+' + str((float(u5[1]) - float(t5[1])) / float(u5[1])))
-                        Sub_Avg.append(u5[1])
-                    if t5[1] > u5[1]:
-                        fighter22.append('Sub.Avg.' + '+' + str((float(t5[1]) - float(u5[1])) / float(t5[1])))
-            list3.append('+'.join(fighter11))
-            list4.append('+'.join(fighter22))
+
+            stat_list1 = list1[y]
+            stat_list2 = list2[y]
+            fighter11 = {}
+            fighter22 = {}
+            for e in statperc:
+                if stat_list1[e] > stat_list2[e]:
+                    if stat_list2[e] == 0.0:
+                        stat_list2[e] = stat_list1[e]/2
+                    fighter11[e] = (stat_list1[e] - stat_list2[e]) / stat_list1[e]
+                    statperc[e].append(stat_list1[e])
+                if stat_list2[e] > stat_list1[e]:
+                    if stat_list1[e] == 0.0:
+                        stat_list1[e] = stat_list2[e]/2
+                    fighter22[e] = (stat_list2[e] - stat_list1[e]) / stat_list2[e]
+            list3.append(fighter11)
+            list4.append(fighter22)
+
         return statperc
 
-    statperc = (find_stats(find_fighters_on_cards.fighter1link, find_fighters_on_cards.fighter2link, fighter1, fighter2))
-
+    statperc = (stat_organiser(find_fighters_on_cards.fighter1Stats, find_fighters_on_cards.fighter2Stats, fighter1, fighter2))
 
     def find_weights(dict1):
-        all_stats = []
         stat_weight = {}
-        for key in dict1:
-            all_stats.append(str(len(dict1[key])))
-        total_weight = eval(' + '.join(all_stats))
         for e in dict1:
-            stat_weight[e] = str(len(dict1[e])) + '/' + str(total_weight)
+            stat_weight[e] = str(len(dict1[e])) + '/' + str(len(find_fighters_on_cards.fighter1Stats))
         return stat_weight
 
     stat_weight = find_weights(statperc)
     print(stat_weight)
 
+    for e in range(len(fighter1)):
 
-    for k in range(len(fighter1)):
-        e = fighter1[k]
-        i = fighter2[k]
-        fighter3 = []
-        fighter4 = []
-        e1 = e.split('+')
-        i1 = i.split('+')
-        for u in e1:
-            if u == 'Record:':
-                fighter3.append(str(float(e1[int(e1.index(u)) + 1]) * eval(stat_weight['Record:'])))
-            if u == 'Exp:':
-                fighter3.append(str(float(e1[int(e1.index(u)) + 1]) * eval(stat_weight['Exp:'])))
-            if u == 'Weight':
-                fighter3.append(str(float(e1[int(e1.index(u)) + 1]) * eval(stat_weight['Weight'])))
-            if u == 'Reach':
-                fighter3.append(str(float(e1[int(e1.index(u)) + 1]) * eval(stat_weight['Reach'])))
-            if u == 'Height':
-                fighter3.append(str(float(e1[int(e1.index(u)) + 1]) * eval(stat_weight['Height'])))
-            if u == 'SLpM':
-                if 'Str.Acc.' in e1:
-                    if 'Str.Def' in e1:
-                        fighter3.append(str((float(e1[int(e1.index(u)) + 1]) * eval(stat_weight['SLpM'])) * 1.1))
-                    else:
-                        fighter3.append(str((float(e1[int(e1.index(u)) + 1]) * eval(stat_weight['SLpM'])) * 1.05))
-                else:
-                    if 'Str.Def' in e1:
-                        fighter3.append(str((float(e1[int(e1.index(u)) + 1]) * eval(stat_weight['SLpM'])) * 1.05))
-                    else:
-                        fighter3.append(str(float(e1[int(e1.index(u)) + 1]) * eval(stat_weight['SLpM'])))
-            if u == 'Str.Acc.':
-                if 'Str.Def' in e1:
-                    if 'SLpM' in e1:
-                        fighter3.append(str((float(e1[int(e1.index(u)) + 1]) * eval(stat_weight['Str.Acc.'])) * 1.1))
-                    else:
-                        fighter3.append(str((float(e1[int(e1.index(u)) + 1]) * eval(stat_weight['Str.Acc.'])) * 1.05))
-                else:
-                    if 'SLpM' in e1:
-                        fighter3.append(str((float(e1[int(e1.index(u)) + 1]) * eval(stat_weight['Str.Acc.'])) * 1.05))
-                    else:
-                        fighter3.append(str(float(e1[int(e1.index(u)) + 1]) * eval(stat_weight['Str.Acc.'])))
-            if u == 'SApM':
-                fighter3.append(str(float(e1[int(e1.index(u)) + 1]) * eval(stat_weight['SApM'])))
-            if u == 'Str.Def':
-                if 'SLpM' in e1:
-                    if 'Str.Def' in e1:
-                        fighter3.append(str((float(e1[int(e1.index(u)) + 1]) * eval(stat_weight['Str.Def'])) * 1.1))
-                    else:
-                        fighter3.append(str((float(e1[int(e1.index(u)) + 1]) * eval(stat_weight['Str.Def'])) * 1.05))
-                else:
-                    if 'Str.Def' in e1:
-                        fighter3.append(str((float(e1[int(e1.index(u)) + 1]) * eval(stat_weight['Str.Def'])) * 1.05))
-                    else:
-                        fighter3.append(str(float(e1[int(e1.index(u)) + 1]) * eval(stat_weight['Str.Def'])))
-            if u == 'TDAvg.':
-                if 'TDAcc.' in e1:
-                    if 'Sub.Avg.' in e1:
-                        fighter3.append(str((float(e1[int(e1.index(u)) + 1]) * eval(stat_weight['TDAvg.'])) * 1.1))
-                    else:
-                        fighter3.append(str((float(e1[int(e1.index(u)) + 1]) * eval(stat_weight['TDAvg.'])) * 1.05))
-                else:
-                    if 'Sub.Avg.' in e1:
-                        fighter3.append(str((float(e1[int(e1.index(u)) + 1]) * eval(stat_weight['TDAvg.'])) * 1.05))
-                    else:
-                        fighter3.append(str(float(e1[int(e1.index(u)) + 1]) * eval(stat_weight['TDAvg.'])))
-            if u == 'TDAcc.':
-                if 'TDAvg.' in e1:
-                    if 'Sub.Avg.' in e1:
-                        fighter3.append(str((float(e1[int(e1.index(u)) + 1]) * eval(stat_weight['TDAcc.'])) * 1.1))
-                    else:
-                        fighter3.append(str((float(e1[int(e1.index(u)) + 1]) * eval(stat_weight['TDAcc.'])) * 1.05))
-                else:
-                    if 'Sub.Avg.' in e1:
-                        fighter3.append(str((float(e1[int(e1.index(u)) + 1]) * eval(stat_weight['TDAcc.'])) * 1.05))
-                    else:
-                        fighter3.append(str(float(e1[int(e1.index(u)) + 1]) * eval(stat_weight['TDAcc.'])))
-            if u == 'TDDef.':
-                fighter3.append(str(float(e1[int(e1.index(u)) + 1]) * eval(stat_weight['TDDef.'])))
-            if u == 'Sub.Avg.':
-                if 'TDAvg.' in e1:
-                    if 'TDAcc.' in e1:
-                        fighter3.append(str((float(e1[int(e1.index(u)) + 1]) * eval(stat_weight['Sub.Avg.'])) * 1.1))
-                    else:
-                        fighter3.append(str((float(e1[int(e1.index(u)) + 1]) * eval(stat_weight['Sub.Avg.'])) * 1.05))
-                else:
-                    if 'TDAcc.' in e1:
-                        fighter3.append(str((float(e1[int(e1.index(u)) + 1]) * eval(stat_weight['Sub.Avg.'])) * 1.05))
-                    else:
-                        fighter3.append(str(float(e1[int(e1.index(u)) + 1]) * eval(stat_weight['Sub.Avg.'])))
-        for t in i1:
-            if t == 'Record:':
-                fighter4.append(str(float(i1[int(i1.index(t)) + 1]) * eval(stat_weight['Record:'])))
-            if t == 'Exp:':
-                fighter4.append(str(float(i1[int(i1.index(t)) + 1]) * eval(stat_weight['Exp:'])))
-            if t == 'Weight':
-                fighter4.append(str(float(i1[int(i1.index(t)) + 1]) * eval(stat_weight['Weight'])))
-            if t == 'Reach':
-                fighter4.append(str(float(i1[int(i1.index(t)) + 1]) * eval(stat_weight['Reach'])))
-            if t == 'Height':
-                fighter4.append(str(float(i1[int(i1.index(t)) + 1]) * eval(stat_weight['Height'])))
-            if t == 'SLpM':
-                if 'Str.Acc.' in i1:
-                    if 'Str.Def' in i1:
-                        fighter4.append(str((float(i1[int(i1.index(t)) + 1]) * eval(stat_weight['SLpM'])) * 1.1))
-                    else:
-                        fighter4.append(str((float(i1[int(i1.index(t)) + 1]) * eval(stat_weight['SLpM'])) * 1.05))
-                else:
-                    if 'Str.Def' in i1:
-                        fighter4.append(str((float(i1[int(i1.index(t)) + 1]) * eval(stat_weight['SLpM'])) * 1.05))
-                    else:
-                        fighter4.append(str(float(i1[int(i1.index(t)) + 1]) * eval(stat_weight['SLpM'])))
-            if t == 'Str.Acc.':
-                if 'SLpM' in i1:
-                    if 'Str.Def' in i1:
-                        fighter4.append(str((float(i1[int(i1.index(t)) + 1]) * eval(stat_weight['Str.Acc.'])) * 1.1))
-                    else:
-                        fighter4.append(str((float(i1[int(i1.index(t)) + 1]) * eval(stat_weight['Str.Acc.'])) * 1.05))
-                else:
-                    if 'Str.Def' in i1:
-                        fighter4.append(str((float(i1[int(i1.index(t)) + 1]) * eval(stat_weight['Str.Acc.'])) * 1.05))
-                    else:
-                        fighter4.append(str(float(i1[int(i1.index(t)) + 1]) * eval(stat_weight['Str.Acc.'])))
-            if t == 'SApM':
-                fighter4.append(str(float(i1[int(i1.index(t)) + 1]) * eval(stat_weight['SApM'])))
-            if t == 'Str.Def':
-                if 'Str.Acc.' in i1:
-                    if 'Str.Def' in i1:
-                        fighter4.append(str((float(i1[int(i1.index(t)) + 1]) * eval(stat_weight['Str.Def'])) * 1.1))
-                    else:
-                        fighter4.append(str((float(i1[int(i1.index(t)) + 1]) * eval(stat_weight['Str.Def'])) * 1.05))
-                else:
-                    if 'Str.Def' in i1:
-                        fighter4.append(str((float(i1[int(i1.index(t)) + 1]) * eval(stat_weight['Str.Def'])) * 1.05))
-                    else:
-                        fighter4.append(str(float(i1[int(i1.index(t)) + 1]) * eval(stat_weight['Str.Def'])))
-            if t == 'TDAvg.':
-                if 'TDAcc.' in i1:
-                    if 'Sub.Avg.' in i1:
-                        fighter4.append(str((float(i1[int(i1.index(t)) + 1]) * eval(stat_weight['TDAvg.'])) * 1.1))
-                    else:
-                        fighter4.append(str((float(i1[int(i1.index(t)) + 1]) * eval(stat_weight['TDAvg.'])) * 1.05))
-                else:
-                    if 'Sub.Avg.' in i1:
-                        fighter4.append(str((float(i1[int(i1.index(t)) + 1]) * eval(stat_weight['TDAvg.'])) * 1.05))
-                    else:
-                        fighter4.append(str(float(i1[int(i1.index(t)) + 1]) * eval(stat_weight['TDAvg.'])))
-            if t == 'TDAcc.':
-                if 'TDAvg.' in i1:
-                    if 'Sub.Avg.' in i1:
-                        fighter4.append(str((float(i1[int(i1.index(t)) + 1]) * eval(stat_weight['TDAcc.'])) * 1.1))
-                    else:
-                        fighter4.append(str((float(i1[int(i1.index(t)) + 1]) * eval(stat_weight['TDAcc.'])) * 1.05))
-                else:
-                    if 'Sub.Avg.' in i1:
-                        fighter4.append(str((float(i1[int(i1.index(t)) + 1]) * eval(stat_weight['TDAcc.'])) * 1.05))
-                    else:
-                        fighter4.append(str(float(i1[int(i1.index(t)) + 1]) * eval(stat_weight['TDAcc.'])))
-            if t == 'TDDef.':
-                fighter4.append(str(float(i1[int(i1.index(t)) + 1]) * eval(stat_weight['TDDef.'])))
-            if t == 'Sub.Avg.':
-                if 'TDAcc.' in i1:
-                    if 'TDAvg.' in i1:
-                        fighter4.append(str((float(i1[int(i1.index(t)) + 1]) * eval(stat_weight['Sub.Avg.'])) * 1.1))
-                    else:
-                        fighter4.append(str((float(i1[int(i1.index(t)) + 1]) * eval(stat_weight['Sub.Avg.'])) * 1.05))
-                else:
-                    if 'TDAvg.' in i1:
-                        fighter4.append(str((float(i1[int(i1.index(t)) + 1]) * eval(stat_weight['Sub.Avg.'])) * 1.05))
-                    else:
-                        fighter4.append(str(float(i1[int(i1.index(t)) + 1]) * eval(stat_weight['Sub.Avg.'])))
+        grapling_stats = []
+        striking_stats = []
+        exp_stats = []
+        other_stats = []
+        grapling_stats1 = []
+        striking_stats1 = []
+        exp_stats1 = []
+        other_stats1 = []
+        for y in stat_weight:
 
-        for y in fighter3:
-            y.replace('-', '')
-        for y in fighter4:
-            y.replace('-', '')
-        combo1 = ('+'.join(fighter3))
-        combo2 = ('+'.join(fighter4))
-        if combo1 == '':
-            combo1 = '0'
-        if combo2 == '':
-            combo2 = '0'
-            print(combo1)
-            print(combo2)
-        if eval(combo1) > eval(combo2):
-            winners.append(fighter11[fighter1.index(e)])
-        if eval(combo1) < eval(combo2):
-            winners.append(fighter22[fighter2.index(i)])
+            if y in fighter1[e]:
+                if y == 'Record:':
+                    exp_stats.append(str(fighter1[e][y] * eval(stat_weight[y])))
+                if y == 'Exp:':
+                    exp_stats.append(str(fighter1[e][y] * eval(stat_weight[y])))
+                if y == 'Weight:':
+                    other_stats.append(str(fighter1[e][y] * eval(stat_weight[y])))
+                if y == 'Reach:':
+                    other_stats.append(str(fighter1[e][y] * eval(stat_weight[y])))
+                if y == 'Height:':
+                    other_stats.append(str(fighter1[e][y] * eval(stat_weight[y])))
+                if y == 'SLpM:':
+                    striking_stats.append(str(fighter1[e][y] * eval(stat_weight[y])))
+                if y == 'Str.Acc.:':
+                    striking_stats.append(str(fighter1[e][y] * eval(stat_weight[y])))
+                if y == 'SApM:':
+                    other_stats.append(str(fighter1[e][y] * eval(stat_weight[y])))
+                if y == 'Str.Def:':
+                    striking_stats.append(str(fighter1[e][y] * eval(stat_weight[y])))
+                if y == 'TDAvg.:':
+                    grapling_stats.append(str(fighter1[e][y] * eval(stat_weight[y])))
+                if y == 'TDAcc.:':
+                    grapling_stats.append(str(fighter1[e][y] * eval(stat_weight[y])))
+                if y == 'TDDef.:':
+                    striking_stats.append(str(fighter1[e][y] * eval(stat_weight[y])))
+                if y == 'Sub.Avg.:':
+                    grapling_stats.append(str(fighter1[e][y] * eval(stat_weight[y])))
+            if y in fighter2[e]:
+                if y == 'Record:':
+                    exp_stats1.append(str(fighter2[e][y] * eval(stat_weight[y])))
+                if y == 'Exp:':
+                    exp_stats1.append(str(fighter2[e][y] * eval(stat_weight[y])))
+                if y == 'Weight:':
+                    other_stats1.append(str(fighter2[e][y] * eval(stat_weight[y])))
+                if y == 'Reach:':
+                    other_stats1.append(str(fighter2[e][y] * eval(stat_weight[y])))
+                if y == 'Height:':
+                    other_stats1.append(str(fighter2[e][y] * eval(stat_weight[y])))
+                if y == 'SLpM:':
+                    striking_stats1.append(str(fighter2[e][y] * eval(stat_weight[y])))
+                if y == 'Str.Acc.:':
+                    striking_stats1.append(str(fighter2[e][y] * eval(stat_weight[y])))
+                if y == 'SApM:':
+                    other_stats1.append(str(fighter2[e][y] * eval(stat_weight[y])))
+                if y == 'Str.Def:':
+                    striking_stats1.append(str(fighter2[e][y] * eval(stat_weight[y])))
+                if y == 'TDAvg.:':
+                    grapling_stats1.append(str(fighter2[e][y] * eval(stat_weight[y])))
+                if y == 'TDAcc.:':
+                    grapling_stats1.append(str(fighter2[e][y] * eval(stat_weight[y])))
+                if y == 'TDDef.:':
+                    striking_stats1.append(str(fighter2[e][y] * eval(stat_weight[y])))
+                if y == 'Sub.Avg.:':
+                    grapling_stats1.append(str(fighter2[e][y] * eval(stat_weight[y])))
 
+        grap1 = ('+'.join(grapling_stats))
+        grap2 = ('+'.join(grapling_stats1))
+        strik1 = ('+'.join(striking_stats))
+        strik2 = ('+'.join(striking_stats1))
+        exp1 = ('+'.join(exp_stats))
+        exp2 = ('+'.join(exp_stats1))
+        other1 = ('+'.join(other_stats))
+        other2 = ('+'.join(other_stats1))
+        if grap1 == '':
+            grap1 = '0'
+        if grap2 == '':
+            grap2 = '0'
+        if strik1 == '':
+            strik1 = '0'
+        if strik2 == '':
+            strik2 = '0'
+        if exp1 == '':
+            exp1 = '0'
+        if exp2 == '':
+            exp2 = '0'
+        if other1 == '':
+            other1 = '0'
+        if other2 == '':
+            other2 = '0'
+        combo1 = float(eval(str((eval(grap1)*len(grap1)) + (eval(strik1)*len(strik1)) + (eval(exp1)*len(exp1)) + (eval(other1)*len(other1)))))
+        combo2 = float(eval(str((eval(grap2)*len(grap2)) + (eval(strik2)*len(strik2)) + (eval(exp2)*len(exp2)) + (eval(other2)*len(other2)))))
+        if combo1 > combo2:
+            winners.append(fighter11[e])
+        if combo1 < combo2:
+            winners.append(fighter22[e])
 
-    print(len(winners))
-    print(len(fighter11))
-    if len(winners) == len(fighter11):
-        for k in range(len(winners)):
-            e = winners[k]
-            i = fighter11[k]
-            if e == i:
-                correct.append('ok')
-    print(winners)
-    print(fighter11)
-    print(fighter22)
-    answer = len(correct)/len(fighter1)
+    for k in range(len(winners)):
+        e = winners[k]
+        i = fighter11[k]
+        if e == i:
+            correct.append('ok')
+   # print(winners, fighter11, fighter22)
+    answer = len(correct) / len(fighter1)
     percentage = "{:.0%}".format(answer)
     print('Correct Percentage: ' + str(percentage))
+    pr.disable()
+    pr.print_stats()
