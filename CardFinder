@@ -1,5 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
+import cProfile
+pr = cProfile.Profile()
 
 
 def page_url(url):
@@ -10,31 +12,63 @@ def page_url(url):
 
 
 class find_fighters_on_cards:
-
+    pr.enable()
     fighter1 = []
-    fighter1link = []
+    fighter1Stats = []
     fighter2 = []
-    fighter2link = []
-    card_link = []
+    fighter2Stats = []
 
-    def find_cards(list, url):
-        url1 = page_url(url)
-        cards = url1.find_all(class_='b-link b-link_style_black')
-        for e in cards[0:100]:
-            list.append((str(e).split('"'))[3])
-        return list
+    url1 = page_url("http://www.ufcstats.com/statistics/events/completed?page=all")
+    cards = url1.find_all(class_='b-link b-link_style_black')
+    for e in cards[0:100]:
+        url1 = page_url(((str(e).split('"'))[3]))
+        fighters = url1.find_all(class_='b-link b-link_style_black')
+        for t in range(len(fighters)):
+            try:
+                url1 = page_url(str(fighters[t]).split('"')[3])
+                Stats = url1.find_all(class_='l-page__container')
+                stat_list = (Stats[1].text.replace('\n', '').replace('. ', '.').replace('TD ', 'TD').replace(' lbs.', 'lbs.').replace('--', '0').replace("' ", "'").split())
+                Stat_list = {}
+            except:
+                print('Stats')
+                print(len(Stats))
+            if 'Record:' in stat_list:
+                w1 = stat_list[stat_list.index('Record:') + 1].split('-')
+                Stat_list['Record:'] = float((int(w1[0])) / ((int(w1[0])) + (int(w1[1])) + (int(w1[2]))))
+                Stat_list['Exp:'] = float((int(w1[0])) + (int(w1[1])) + (int(w1[2])))
+            if 'Height:' in stat_list:
+                if stat_list[stat_list.index('Height:') + 1] == '0':
+                    Stat_list['Height:'] = '0'
+                else:
+                    Stat_list['Height:'] = (float(stat_list[stat_list.index('Height:') + 1].split('\'')[0]) * 12) + float(
+                        stat_list[stat_list.index('Height:') + 1].split('\'')[1].replace('"', ''))
+            if 'Weight:' in stat_list:
+                Stat_list['Weight:'] = float(stat_list[stat_list.index('Weight:') + 1].replace('lbs.', ''))
+            if 'Reach:' in stat_list:
+                Stat_list['Reach:'] = float(stat_list[stat_list.index('Reach:') + 1].replace('"', ''))
+            if 'SLpM:' in stat_list:
+                Stat_list['SLpM:'] = float(stat_list[stat_list.index('SLpM:') + 1])
+            if 'Str.Acc.:' in stat_list:
+                Stat_list['Str.Acc.:'] = float(stat_list[stat_list.index('Str.Acc.:') + 1].replace('%', ''))
+            if 'SApM:' in stat_list:
+                Stat_list['SApM:'] = float(stat_list[stat_list.index('SApM:') + 1])
+            if 'Str.Def:' in stat_list:
+                Stat_list['Str.Def:'] = float(stat_list[stat_list.index('Str.Def:') + 1].replace('%', ''))
+            if 'TDAvg.:' in stat_list:
+                Stat_list['TDAvg.:'] = float(stat_list[stat_list.index('TDAvg.:') + 1])
+            if 'TDAcc.:' in stat_list:
+                Stat_list['TDAcc.:'] = float(stat_list[stat_list.index('TDAcc.:') + 1].replace('%', ''))
+            if 'TDDef.:' in stat_list:
+                Stat_list['TDDef.:'] = float(stat_list[stat_list.index('TDDef.:') + 1].replace('%', ''))
+            if 'Sub.Avg.:' in stat_list:
+                Stat_list['Sub.Avg.:'] = float(stat_list[stat_list.index('Sub.Avg.:') + 1])
 
-    find_cards(card_link, "http://www.ufcstats.com/statistics/events/completed?page=all")
+            if t % 2 == 0:
+                fighter1Stats.append(Stat_list)
+                fighter1.append(fighters[t].text.replace('\n', '').replace('  ', ''))
+            else:
+                fighter2Stats.append(Stat_list)
+                fighter2.append(fighters[t].text.replace('\n', '').replace('  ', ''))
+    pr.disable()
+    pr.print_stats()
 
-    def find_card_info(list1, list2, list3, list4, list5):
-        for e in list1:
-            url1 = page_url(e)
-            fighters = url1.find_all(class_='b-link b-link_style_black')
-            for t in range(0, len(fighters), 2):
-                list4.append(str(fighters[t]).split('"')[3])
-                list2.append(fighters[t].text)
-            for y in range(1, len(fighters), 2):
-                list5.append(str(fighters[y]).split('"')[3])
-                list3.append(fighters[y].text)
-
-    find_card_info(card_link, fighter1, fighter2, fighter1link, fighter2link)
